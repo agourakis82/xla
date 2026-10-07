@@ -15,8 +15,12 @@ limitations under the License.
 
 #include "xla/backends/profiler/gpu/gpu_metadata.h"
 
+#include <cstdint>
+
 #include "absl/log/log.h"
 #include "absl/strings/str_cat.h"
+#include "third_party/gpus/cuda/extras/CUPTI/include/cupti_result.h"
+#include "third_party/gpus/cuda/extras/CUPTI/include/cupti_version.h"
 #include "third_party/gpus/cuda/include/cuda.h"
 #include "third_party/gpus/cuda/include/cuda_runtime_api.h"
 #include "third_party/gpus/cuda/include/driver_types.h"
@@ -54,6 +58,12 @@ void AddGpuMetadata() {
     SetCudaVersion(StatType::kMetadataCudaDriverVersion, driver_version);
   } else {
     VLOG(1) << "Could not get CUDA driver version: " << cudaGetErrorString(err);
+  }
+  uint32_t cupti_version = 0;
+  if (cuptiGetVersion(&cupti_version) == CUPTI_SUCCESS && cupti_version > 0) {
+    SetProfilerMetadata(
+        tsl::profiler::GetStatTypeStr(StatType::kMetadataCuptiVersion),
+        absl::StrCat(cupti_version));
   }
 }
 }  // namespace profiler

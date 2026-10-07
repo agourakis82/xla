@@ -1013,11 +1013,14 @@ cc_library(
         "cuda-only",
         "gpu",
     ],
+    visibility = ["//visibility:public"],
     deps = [
         "//xla/backends/profiler/util:metadata_registry",
+        "//xla/tsl/cuda:cupti",
         "//xla/tsl/profiler/utils:xplane_schema",
         "@com_google_absl//absl/log",
         "@com_google_absl//absl/strings",
         "@local_config_cuda//cuda:cuda_headers",
+        "@local_config_cuda//cuda:cupti_headers",
     ],
 )

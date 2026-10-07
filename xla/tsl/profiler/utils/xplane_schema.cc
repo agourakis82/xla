@@ -423,6 +423,7 @@ const StatTypeMap& GetStatTypeMap() {
        {"libtpu_version", kMetadataLibtpuVersion},
        {"cuda_runtime_version", kMetadataCudaRuntimeVersion},
        {"cuda_driver_version", kMetadataCudaDriverVersion},
+       {"cupti_version", kMetadataCuptiVersion},
        // LLO Debug Dump.
        {"llo_proto", kLloProto},
        // Power-related stats

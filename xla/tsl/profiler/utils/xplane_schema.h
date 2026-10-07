@@ -414,11 +414,12 @@ enum StatType {
   kDevCapPeakSpmemWrBwGigabytesPerSecond,
   kDevCapPeakScTeraflopsPerSecond,
   kDevCapNumSparseCoreTiles,
+  kMetadataCuptiVersion,
   // LINT.ThenChange(:last_stat_type)
 
   // LINT.IfChange(last_stat_type)
   // Change this to point to the last stat type when adding a new one.
-  kLastStatType = kDevCapNumSparseCoreTiles,
+  kLastStatType = kMetadataCuptiVersion,
   // LINT.ThenChange(:stat_type_enum)
 };
 
