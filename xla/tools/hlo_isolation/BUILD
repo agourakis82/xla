@@ -56,6 +56,7 @@ cc_library(
         "//xla:literal",
         "//xla:literal_comparison",
         "//xla:shape_util",
+        "//xla:util",
         "//xla:xla_data_proto_cc",
         "//xla/hlo/ir:hlo",
         "//xla/hlo/pass:hlo_pass_pipeline",
@@ -168,8 +169,10 @@ xla_cc_test(
     deps = [
         ":hlo_inf_nan_intent_analyzer",
         ":hlo_isolation_api",
+        ":hlo_isolation_proto_cc",
         "//xla:literal",
         "//xla:literal_util",
+        "//xla:shape_util",
         "//xla/hlo/ir:hlo",
         "//xla/hlo/parser:hlo_parser",
         "//xla/service:hlo_module_config",
