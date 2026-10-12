@@ -42,6 +42,7 @@ limitations under the License.
 #include "llvm/Support/TypeSize.h"
 #include "llvm/Support/raw_ostream.h"
 #include "xla/codegen/intrinsic/cpp/cpp_gen_intrinsics.h"
+#include "xla/codegen/intrinsic/cpp/custom_cpp_intrinsics_ll.h"
 #include "xla/codegen/intrinsic/cpp/intrinsic_declarations.h"
 #include "xla/codegen/intrinsic/erf.h"
 #include "xla/codegen/intrinsic/exp.h"
@@ -127,12 +128,21 @@ IntrinsicFunctionLib::IntrinsicFunctionLib(const IntrinsicOptions& options)
     : options_(options) {
   if (options.device_type == intrinsics::DeviceType::kIntelCpu ||
       options.device_type == intrinsics::DeviceType::kAmdCpu ||
-      options.device_type == intrinsics::DeviceType::kArmCpu) {
+      options.device_type == intrinsics::DeviceType::kArmCpu ||
+      options.device_type == intrinsics::DeviceType::kSystemZCpu) {
     const std::string& ir_string = GetCppGenIrString(options);
     if (!ir_string.empty()) {
       auto eigen_lib =
           std::make_unique<CppGenIntrinsicLibrary>(ir_string, "eigen");
       ir_libraries_.push_back(std::move(eigen_lib));
+    }
+    if (AreCustomCppIntrinsicsAvailable()) {
+      ir_libraries_.push_back(std::make_unique<CppGenIntrinsicLibrary>(
+          ::llvm_ir::kCustomCppIntrinsicsLlIr, "custom_cpp_intrinsics"));
+      intrinsic_functions_.push_back(
+          std::make_unique<IntrinsicAdapter<intrinsics::Sin>>());
+      intrinsic_functions_.push_back(
+          std::make_unique<IntrinsicAdapter<intrinsics::Cos>>());
     }
   }
 

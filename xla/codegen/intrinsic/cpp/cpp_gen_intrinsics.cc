@@ -44,6 +44,7 @@ limitations under the License.
 #include "llvm/Support/Alignment.h"
 #include "llvm/Support/SourceMgr.h"
 #include "llvm/Support/raw_ostream.h"
+#include "xla/codegen/intrinsic/cpp/custom_cpp_intrinsics_ll.h"
 #include "xla/codegen/intrinsic/cpp/eigen_unary_16_ll.h"
 #include "xla/codegen/intrinsic/cpp/eigen_unary_32_ll.h"
 #include "xla/codegen/intrinsic/cpp/eigen_unary_64_ll.h"
@@ -70,6 +71,10 @@ bool AreEigenIntrinsicsAvailable(absl::string_view features) {
   intrinsics::IntrinsicOptions options;
   options.features = std::string(features);
   return !GetCppGenIrString(options).empty();
+}
+
+bool AreCustomCppIntrinsicsAvailable() {
+  return !::llvm_ir::kCustomCppIntrinsicsLlIr.empty();
 }
 
 namespace {

@@ -83,6 +83,52 @@ class EigenAtan : public Intrinsic<EigenAtan> {
                              UnaryFunctionType(module, type));
   }
 };
+
+class Sin : public Intrinsic<Sin> {
+ public:
+  static constexpr absl::string_view kName = "sin";
+
+  static std::vector<std::vector<Type>> SupportedVectorTypes(
+      absl::string_view features) {
+    if (!AreCustomCppIntrinsicsAvailable()) {
+      return {};
+    }
+    return {
+        {Type::S(xla::F32)},     {Type::V(xla::F32, 4)}, {Type::V(xla::F32, 8)},
+        {Type::V(xla::F32, 16)}, {Type::S(xla::F64)},    {Type::V(xla::F64, 2)},
+        {Type::V(xla::F64, 4)},  {Type::V(xla::F64, 8)},
+    };
+  }
+
+  static absl::StatusOr<llvm::Function*> CreateDefinition(
+      llvm::Module* module, const IntrinsicOptions& options, Type type) {
+    return GetCppGenFunction(module, Name(type),
+                             UnaryFunctionType(module, type));
+  }
+};
+
+class Cos : public Intrinsic<Cos> {
+ public:
+  static constexpr absl::string_view kName = "cos";
+
+  static std::vector<std::vector<Type>> SupportedVectorTypes(
+      absl::string_view features) {
+    if (!AreCustomCppIntrinsicsAvailable()) {
+      return {};
+    }
+    return {
+        {Type::S(xla::F32)},     {Type::V(xla::F32, 4)}, {Type::V(xla::F32, 8)},
+        {Type::V(xla::F32, 16)}, {Type::S(xla::F64)},    {Type::V(xla::F64, 2)},
+        {Type::V(xla::F64, 4)},  {Type::V(xla::F64, 8)},
+    };
+  }
+
+  static absl::StatusOr<llvm::Function*> CreateDefinition(
+      llvm::Module* module, const IntrinsicOptions& options, Type type) {
+    return GetCppGenFunction(module, Name(type),
+                             UnaryFunctionType(module, type));
+  }
+};
 }  // namespace xla::codegen::intrinsics
 
 #endif  // XLA_CODEGEN_INTRINSIC_CPP_INTRINSIC_DECLARATIONS_H_

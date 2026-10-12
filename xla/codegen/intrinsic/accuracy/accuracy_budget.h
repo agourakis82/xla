@@ -162,7 +162,7 @@ constexpr AccuracyBudget kTanhF64Budget = {
 
 // Sin
 constexpr AccuracyBudget kSinF32Budget = {
-    /*cpu=*/{/*regular=*/1,
+    /*cpu=*/{/*regular=*/0,
              /*subnormal=*/0},
     /*gpu=*/
     {/*regular=*/1,
@@ -170,7 +170,7 @@ constexpr AccuracyBudget kSinF32Budget = {
 };
 
 constexpr AccuracyBudget kSinF64Budget = {
-    /*cpu=*/{/*regular=*/1,
+    /*cpu=*/{/*regular=*/0,
              /*subnormal=*/1},
     /*gpu=*/
     {/*regular=*/1,
@@ -183,7 +183,7 @@ constexpr AccuracyBudget kSinF64Budget = {
 
 // Cos
 constexpr AccuracyBudget kCosF32Budget = {
-    /*cpu=*/{/*regular=*/1,
+    /*cpu=*/{/*regular=*/0,
              /*subnormal=*/0},
     /*gpu=*/
     {/*regular=*/1,
@@ -191,7 +191,7 @@ constexpr AccuracyBudget kCosF32Budget = {
 };
 
 constexpr AccuracyBudget kCosF64Budget = {
-    /*cpu=*/{/*regular=*/1,
+    /*cpu=*/{/*regular=*/0,
              /*subnormal=*/0},
     /*gpu=*/
     {/*regular=*/1,

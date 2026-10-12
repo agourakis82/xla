@@ -365,6 +365,16 @@ func.func @rsqrt_f32_vector_16(%arg0: vector<16xf32>) -> vector<16xf32> {
 // AVX512: %[[CALL:.*]] = call @xla.rsqrt.v16f32(%arg0) : (vector<16xf32>) -> vector<16xf32>
 // AVX512: return %[[CALL]]
 
+// -----
 
-
-
+func.func @sin_cos_vector(%arg0: vector<8xf32>, %arg1: vector<4xf64>) -> (vector<8xf32>, vector<4xf64>) {
+  %s = math.sin %arg0 : vector<8xf32>
+  %c = math.cos %arg1 : vector<4xf64>
+  return %s, %c : vector<8xf32>, vector<4xf64>
+}
+// CHECK-LABEL: @sin_cos_vector
+// CHECK-NOT: math.sin
+// CHECK-NOT: math.cos
+// CHECK: %[[SIN:.*]] = call @xla.sin.v8f32(%arg0) : (vector<8xf32>) -> vector<8xf32>
+// CHECK: %[[COS:.*]] = call @xla.cos.v4f64(%arg1) : (vector<4xf64>) -> vector<4xf64>
+// CHECK: return %[[SIN]], %[[COS]]
