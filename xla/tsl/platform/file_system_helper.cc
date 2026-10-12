@@ -191,6 +191,35 @@ absl::Status GetMatchingPaths(FileSystem* fs, Env* env,
   std::deque<std::pair<std::string, int>> next_expand_queue;
   expand_queue.emplace_back(dirs[matching_index - 1], matching_index - 1);
 
+#ifdef LIBTPU_ON_GCE
+  // libtpu.so enumerates files in /dev/ and /sys/ using GetMatchingPaths(),
+  // which is faster to do single-threaded.
+  while (!expand_queue.empty()) {
+    next_expand_queue.clear();
+    for (const auto& queue_item : expand_queue) {
+      const std::string& parent = queue_item.first;
+      std::vector<std::string> children;
+      absl::Status s = fs->GetChildren(parent, &children);
+      if (s.code() == absl::StatusCode::kPermissionDenied) {
+        continue;
+      }
+      const int index = queue_item.second + 1;
+      const std::string& match_pattern = dirs[index];
+      for (const std::string& child : children) {
+        const std::string path = io::JoinPath(parent, child);
+        if (!fs->Match(path, match_pattern)) {
+          continue;
+        }
+        if (index == dirs.size() - 1) {
+          results->emplace_back(path);
+        } else if (fs->IsDirectory(path).ok()) {
+          next_expand_queue.emplace_back(path, index);
+        }
+      }
+    }
+    std::swap(expand_queue, next_expand_queue);
+  }
+#else
   // Adding to `result` or `new_expand_queue` need to be protected by mutexes
   // since there are multiple threads writing to these.
   absl::Mutex result_mutex;
@@ -269,6 +298,7 @@ absl::Status GetMatchingPaths(FileSystem* fs, Env* env,
     // After evaluating one level, swap the "buffers"
     std::swap(expand_queue, next_expand_queue);
   }
+#endif  // LIBTPU_ON_GCE
 
   return absl::OkStatus();
 }
