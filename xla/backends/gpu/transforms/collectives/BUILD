@@ -861,6 +861,7 @@ cc_library(
         "//xla:xla_proto_cc",
         "//xla/backends/gpu/runtime:all_gather",
         "//xla/backends/gpu/runtime:all_reduce",
+        "//xla/backends/gpu/runtime:collective_info_utils",
         "//xla/backends/gpu/runtime:reduce_scatter",
         "//xla/hlo/ir:hlo",
         "//xla/hlo/pass:hlo_pass",
