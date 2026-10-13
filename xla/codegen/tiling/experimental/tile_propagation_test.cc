@@ -1286,6 +1286,40 @@ TEST_F(TilePropagationTest, CanPropagateReplicaIdThroughBroadcast) {
   )"));
 }
 
+TEST_F(TilePropagationTest, CanPropagateToInputOfAllToAllOp) {
+  HloInstruction* root = ParseAndGetRoot(R"(
+    HloModule m
+    ENTRY e {
+      p0 = f32[10, 64, 5] parameter(0)
+      ROOT all_to_all = f32[10, 64, 5] all-to-all(p0), replica_groups={{0,1}}, dimensions={1}
+    }
+  )");
+  ASSERT_OK_AND_ASSIGN(
+      std::unique_ptr<TilingSpace> tiling_space,
+      TilingSpace::Create(*HloFusionAdaptor::ForInstruction(root),
+                          &mlir_context_));
+
+  ASSERT_OK_AND_ASSIGN(
+      auto tiled_a2a_operands,
+      PropagateTileToInput(
+          *tiling_space, *root,
+          GetTestTile(*tiling_space, root->shape().dimensions()), 0));
+
+  EXPECT_THAT(tiled_a2a_operands, MatchToString(R"(
+    0) (tid_0, tid_1, tid_2)
+      -> offsets [tid_0 * ts_0, (tid_1 * ts_1) mod 32, tid_2 * ts_2]
+         sizes [ts_0, ts_1, ts_2]
+         strides [1, 2, 3]
+         upper bounds [10, 32, 5]
+         replica ids {
+           offsets [(tid_1 * ts_1) / 32]
+           sizes [1]
+           strides [1]
+           upper bounds [2]
+         }
+  )"));
+}
+
 TEST_F(TilePropagationTest, CanPropagateToInputsOfReduceOp) {
   HloInstruction* root = ParseAndGetRoot(R"(
     HloModule m
